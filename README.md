@@ -1,4 +1,4 @@
-# Wanderlust - Travel Listing Platform
+# Holiday-Hideouts - Travel Listing Platform
 
 A full-stack MERN application for listing and reviewing travel destinations with advanced features.
 
