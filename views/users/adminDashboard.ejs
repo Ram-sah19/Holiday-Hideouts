@@ -1,0 +1,64 @@
+<% layout("/layouts/boilerplate") %>
+<h3>Admin Dashboard</h3>
+
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Total Listings</h5>
+          <h2><%= totalListings %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Total Users</h5>
+          <h2><%= totalUsers %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-info">
+        <div class="card-body">
+          <h5 class="card-title">Total Bookings</h5>
+          <h2><%= totalBookings %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Recent Bookings</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Listing</th>
+            <th>Check-in</th>
+            <th>Status</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(let booking of recentBookings) { %>
+            <tr>
+              <td><%= booking.user.username %></td>
+              <td><%= booking.listing.title %></td>
+              <td><%= new Date(booking.checkIn).toLocaleDateString() %></td>
+              <td><span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : 'warning' %>"><%= booking.status %></span></td>
+              <td>₹<%= booking.totalPrice.toLocaleString("en-IN") %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="mt-4">
+    <a href="/admin/listings" class="btn btn-primary">Manage Listings</a>
+    <a href="/admin/users" class="btn btn-success">Manage Users</a>
+  </div>
+</div>

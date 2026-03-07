@@ -1,0 +1,34 @@
+<% layout("/layouts/boilerplate") %>
+<h3>Manage Listings</h3>
+
+<div class="container">
+  <a href="/admin" class="btn btn-secondary mb-3">Back to Dashboard</a>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Owner</th>
+        <th>Price</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(let listing of listings) { %>
+        <tr>
+          <td><%= listing.title %></td>
+          <td><%= listing.owner.username %></td>
+          <td>₹<%= listing.price.toLocaleString("en-IN") %></td>
+          <td><%= listing.location %>, <%= listing.country %></td>
+          <td>
+            <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-primary">View</a>
+            <form action="/admin/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

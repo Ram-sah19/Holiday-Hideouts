@@ -1,0 +1,28 @@
+<% layout("/layouts/boilerplate") %>
+<h3>Edit Profile</h3>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form action="/profile?_method=PUT" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone</label>
+          <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone || '' %>">
+        </div>
+        
+        <div class="mb-3">
+          <label for="bio" class="form-label">Bio</label>
+          <textarea class="form-control" id="bio" name="bio" rows="3"><%= user.bio || '' %></textarea>
+        </div>
+        
+        <div class="mb-3">
+          <label for="profilePicture" class="form-label">Profile Picture</label>
+          <input type="file" class="form-control" id="profilePicture" name="profilePicture" accept="image/*">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+        <a href="/profile" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>

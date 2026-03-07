@@ -1,0 +1,64 @@
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+        <% if (currUser) { %>
+          <a class="nav-link" href="/recommendations">🎯 For You</a>
+        <% } %>
+        <% if (currUser && currUser.role === 'company') { %>
+          <a class="nav-link" href="/listings/new">Add Listing</a>
+        <% } %>
+        <% if (currUser && currUser.role === 'client') { %>
+          <a class="nav-link" href="/bookings">My Bookings</a>
+          <a class="nav-link" href="/favorites">❤️ Favorites</a>
+        <% } %>
+      </div>
+      <div class="navbar-nav ms-auto">
+        <button class="btn btn-sm btn-outline-secondary me-2" id="darkModeToggle">
+          <i class="fas fa-moon" id="darkModeIcon"></i>
+        </button>
+        <% if (!currUser) { %>
+          <a class="nav-link" href="/signup">Sign up</a>
+          <a class="nav-link" href="/login">Login</a>
+        <% } else { %>
+          <a class="nav-link" href="/chat">💬 AI Chat</a>
+          <a class="nav-link" href="/profile">Profile</a>
+          <% if (currUser.role === 'admin') { %>
+            <a class="nav-link" href="/admin">Admin</a>
+          <% } %>
+          <a class="nav-link" href="/logout">Logout</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const darkModeIcon = document.getElementById('darkModeIcon');
+  const html = document.documentElement;
+  
+  // Check saved preference
+  const savedMode = localStorage.getItem('darkMode');
+  if (savedMode === 'enabled') {
+    html.setAttribute('data-bs-theme', 'dark');
+    darkModeIcon.classList.replace('fa-moon', 'fa-sun');
+  }
+  
+  darkModeToggle.addEventListener('click', () => {
+    if (html.getAttribute('data-bs-theme') === 'dark') {
+      html.setAttribute('data-bs-theme', 'light');
+      darkModeIcon.classList.replace('fa-sun', 'fa-moon');
+      localStorage.setItem('darkMode', 'disabled');
+    } else {
+      html.setAttribute('data-bs-theme', 'dark');
+      darkModeIcon.classList.replace('fa-moon', 'fa-sun');
+      localStorage.setItem('darkMode', 'enabled');
+    }
+  });
+</script>

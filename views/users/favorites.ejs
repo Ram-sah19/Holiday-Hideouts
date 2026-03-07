@@ -1,0 +1,29 @@
+<% layout("/layouts/boilerplate") %>
+<h3>❤️ My Favorites</h3>
+
+<div class="container">
+  <% if(favorites.length === 0) { %>
+    <p>No favorites yet. <a href="/listings">Browse listings</a></p>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <% for(let listing of favorites) { %>
+        <div class="col">
+          <div class="card h-100">
+            <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>" style="height:15rem; object-fit: cover;">
+            <div class="card-body">
+              <h5 class="card-title"><%= listing.title %></h5>
+              <p class="card-text">
+                ₹<%= listing.price.toLocaleString("en-IN") %>/night<br>
+                <%= listing.location %>, <%= listing.country %>
+              </p>
+              <a href="/listings/<%= listing._id %>" class="btn btn-primary btn-sm">View</a>
+              <form action="/listings/<%= listing._id %>/favorite?_method=DELETE" method="POST" class="d-inline">
+                <button class="btn btn-outline-danger btn-sm">Remove</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>

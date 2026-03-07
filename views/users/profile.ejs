@@ -1,0 +1,149 @@
+<% layout("/layouts/boilerplate") %>
+<h3><%= user.role === 'company' ? 'Company Profile' : 'My Profile' %></h3>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <% if(user.profilePicture && user.profilePicture.url) { %>
+            <img src="<%= user.profilePicture.url %>" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+          <% } else { %>
+            <div class="rounded-circle bg-<%= user.role === 'company' ? 'success' : 'secondary' %> d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+              <span class="text-white fs-1"><%= user.username.charAt(0).toUpperCase() %></span>
+            </div>
+          <% } %>
+          <h5><%= user.username %></h5>
+          <% if(user.role === 'company') { %>
+            <span class="badge bg-success mb-2">Company Account</span>
+          <% } %>
+          <p class="text-muted"><%= user.email %></p>
+          <% if(user.phone) { %>
+            <p><i class="fas fa-phone"></i> <%= user.phone %></p>
+          <% } %>
+          <% if(user.bio) { %>
+            <p class="mt-3"><%= user.bio %></p>
+          <% } %>
+          <a href="/profile/edit" class="btn btn-primary btn-sm">Edit Profile</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-8">
+      <% if(user.role === 'company') { %>
+        <!-- Company Profile Tabs -->
+        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="listings-tab" data-bs-toggle="tab" data-bs-target="#listings" type="button">My Properties</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button">Statistics</button>
+          </li>
+        </ul>
+        
+        <div class="tab-content mt-3" id="profileTabContent">
+          <div class="tab-pane fade show active" id="listings" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5>Total Properties: <%= myListings.length %></h5>
+              <a href="/listings/new" class="btn btn-success btn-sm">+ Add New Property</a>
+            </div>
+            <% if(myListings.length === 0) { %>
+              <div class="alert alert-info">
+                <p>No properties listed yet. <a href="/listings/new">Add your first property</a></p>
+              </div>
+            <% } else { %>
+              <% for(let listing of myListings) { %>
+                <div class="card mb-3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="<%= listing.image.url %>" class="img-fluid rounded-start" alt="<%= listing.title %>" style="height: 150px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title"><%= listing.title %></h5>
+                        <p class="card-text">
+                          <strong>₹<%= listing.price.toLocaleString("en-IN") %></strong>/night<br>
+                          <small class="text-muted"><%= listing.location %>, <%= listing.country %></small><br>
+                          <small><%= listing.propertyType || 'Property' %> • <%= listing.maxGuests || 2 %> guests</small>
+                        </p>
+                        <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-primary">View</a>
+                        <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-warning">Edit</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            <% } %>
+          </div>
+          
+          <div class="tab-pane fade" id="stats" role="tabpanel">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card text-white bg-primary">
+                  <div class="card-body">
+                    <h6 class="card-title">Total Properties</h6>
+                    <h2><%= myListings.length %></h2>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card text-white bg-success">
+                  <div class="card-body">
+                    <h6 class="card-title">Total Reviews</h6>
+                    <h2><%= myReviews.length %></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="text-muted">More statistics coming soon...</p>
+          </div>
+        </div>
+      <% } else { %>
+        <!-- Client Profile Tabs -->
+        <ul class="nav nav-tabs" id="profileTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button">My Bookings</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button">My Reviews</button>
+          </li>
+        </ul>
+        
+        <div class="tab-content mt-3" id="profileTabContent">
+          <div class="tab-pane fade show active" id="bookings" role="tabpanel">
+            <% if(myBookings.length === 0) { %>
+              <p>No bookings yet. <a href="/listings">Browse properties</a></p>
+            <% } else { %>
+              <% for(let booking of myBookings) { %>
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= booking.listing.title %></h5>
+                    <p>Check-in: <%= new Date(booking.checkIn).toLocaleDateString() %></p>
+                    <p>Status: <span class="badge bg-<%= booking.status === 'confirmed' ? 'success' : 'warning' %>"><%= booking.status %></span></p>
+                    <a href="/bookings/<%= booking._id %>" class="btn btn-sm btn-primary">View Details</a>
+                  </div>
+                </div>
+              <% } %>
+            <% } %>
+          </div>
+          
+          <div class="tab-pane fade" id="reviews" role="tabpanel">
+            <% if(myReviews.length === 0) { %>
+              <p>No reviews yet.</p>
+            <% } else { %>
+              <% for(let review of myReviews) { %>
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <p>Rating: <%= review.rating %> ⭐</p>
+                    <p><%= review.comment %></p>
+                    <small class="text-muted"><%= new Date(review.createdAT).toLocaleDateString() %></small>
+                  </div>
+                </div>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>

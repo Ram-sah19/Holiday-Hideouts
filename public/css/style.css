@@ -1,0 +1,207 @@
+/* Light Mode (Default) */
+body {
+    background-color: rgb(94, 55, 5);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container{
+    flex:1;
+}
+
+.navbar {
+    height: 5rem;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.fa-compass {
+    color: #fe424d;
+    font-size: 2rem;
+}
+
+.nav-link {
+    color: #222222 !important;
+    transition: color 0.3s ease;
+}
+
+.f-info-links a {
+    text-decoration: none;
+    color: #130a0a;
+    transition: color 0.3s ease;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+    color: rgb(233, 11, 11);
+}
+
+.f-info-links, .f-info-socials, .f-info-brand{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.f-info-socials i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}
+
+.f-info{
+    text-align: center;
+    height: 8rem;
+    background-color: #e3d3d3;
+    display: flex;
+    flex-wrap:  wrap;
+    justify-content: center;
+    align-items: space-evenly;
+    transition: background-color 0.3s ease;
+}
+
+/* cards */
+.listing-card{  
+    border: none !important ;
+    margin-bottom: 2rem;
+}
+
+.card-img-top{
+    border-radius: 1rem;
+    width: 100% !important;
+    object-fit:  cover !important;
+}
+
+.card-body P{
+    padding: 0 !important;
+}
+
+.card-text{
+    font-style: oblique;
+    font-weight: 400 !important;
+}
+
+.listing-link{
+    text-decoration: none;
+}
+
+/* Card effects */
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    opacity: 0.1;
+    background-color: white;
+}
+
+.add-btn {
+    background-color: #fe424d !important;
+    border: none !important ;
+}
+.edit-btn{
+    background-color: #fe424d !important;
+    border: none !important ;
+}
+
+/* Show page image */
+.show-img {
+    height: 30vh;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Buttons container */
+.btns {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.btns .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btns .btn-dark:hover {
+    background-color: #333;
+}
+
+.btns .btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Dark Mode Styles */
+[data-bs-theme="dark"] body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .navbar {
+    background-color: #2d2d2d !important;
+}
+
+[data-bs-theme="dark"] .nav-link {
+    color: #e0e0e0 !important;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #2d2d2d;
+}
+
+[data-bs-theme="dark"] .f-info {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .f-info-links a {
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .f-info-links a:hover {
+    color: #fe424d;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary {
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+[data-bs-theme="dark"] .alert {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .table {
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .listing-link {
+    color: #e0e0e0;
+}
