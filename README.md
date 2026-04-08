@@ -95,4 +95,4 @@ ISC
 
 ---
 
-**Built with ❣️ for GSoC Project**
+**Built with ❣️ **
