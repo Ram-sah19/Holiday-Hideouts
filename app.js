@@ -252,8 +252,12 @@ app.use((err, req, res, next) => {
 });
 
 
-// Start server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Start server only when running directly (not in Netlify)
+if (require.main === module) {
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
