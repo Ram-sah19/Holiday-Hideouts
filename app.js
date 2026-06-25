@@ -77,25 +77,25 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-// DB-guard: ensure MongoDB is connected before any route runs.
-// Critical for serverless cold starts — the module-level connectDB() call may
-// not have finished by the time the first request arrives.
+// DB-guard MUST run before passport.session().
+// passport.session() calls deserializeUser → User.findById() on every request.
+// With bufferCommands=false, that query fails instantly if DB isn't ready yet.
 app.use(async (req, res, next) => {
     try {
         await connectDB();
         next();
     } catch (err) {
         console.error("DB connection failed on request:", err.message);
-        res.status(503).send("Service temporarily unavailable. Please try again in a moment.");
+        res.status(503).send("Database unavailable. Please try again in a moment.");
     }
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
