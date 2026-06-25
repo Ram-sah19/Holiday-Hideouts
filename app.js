@@ -24,16 +24,31 @@ const adminRouter = require("./routes/admin.js");
 const chatbotRouter = require("./routes/chatbot.js");
 const recommendationsRouter = require("./routes/recommendations.js");
 
-// Connect to MongoDB
-main().then(() => {
-    console.log("Connected to DB");
-}).catch(err => {
-    console.log("Error connecting to DB:", err);
-});
+// Disable Mongoose's command buffering globally.
+// Without this, Mongoose queues queries for up to 10s while connecting — causing
+// the "buffering timed out" error on serverless cold starts.
+mongoose.set('bufferCommands', false);
 
-async function main() {
-    await mongoose.connect(MONGO_URL);
+// Serverless-safe MongoDB connection with caching.
+// Lambda containers persist between warm invocations, so we reuse the connection.
+let isConnected = false;
+
+async function connectDB() {
+    if (isConnected && mongoose.connection.readyState === 1) {
+        return; // already connected — reuse
+    }
+    isConnected = false;
+    await mongoose.connect(MONGO_URL, {
+        serverSelectionTimeoutMS: 8000,
+        socketTimeoutMS: 8000,
+    });
+    isConnected = true;
+    console.log("Connected to DB ✅");
 }
+
+// Kick off connection at module load (speeds up first request on warm starts)
+connectDB().catch(err => console.error("Initial DB connect failed:", err.message));
+
 
 // App configuration
 // In Netlify Lambda, __dirname is /var/task/netlify/functions (the bundled file location).
@@ -68,6 +83,19 @@ passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// DB-guard: ensure MongoDB is connected before any route runs.
+// Critical for serverless cold starts — the module-level connectDB() call may
+// not have finished by the time the first request arrives.
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error("DB connection failed on request:", err.message);
+        res.status(503).send("Service temporarily unavailable. Please try again in a moment.");
+    }
+});
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
