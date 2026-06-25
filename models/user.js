@@ -30,7 +30,7 @@ const userSchema = new Schema({
 }, { timestamps: true });
 
 // Apply plugin
-userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose, { usernameQueryFields: ["email"] });
 
 module.exports = mongoose.model("User", userSchema);
 // module.exports = User;

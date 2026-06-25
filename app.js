@@ -1,11 +1,9 @@
-if(process.env.NODE_ENV !== "production"){
-    require('dotenv').config();
-}
+require('dotenv').config();
 
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.Atlas_URL || process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust";
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -51,9 +49,9 @@ const sessionOptions = {
     resave: false,
     saveUninitialized: true,
     cookie: {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
     },
 };
 

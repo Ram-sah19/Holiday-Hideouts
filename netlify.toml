@@ -1,11 +1,46 @@
 [build]
+  command = "npm install"
   functions = "netlify/functions"
   publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = [
+    "views/**",
+    "public/**",
+    "models/**",
+    "controllers/**",
+    "routes/**",
+    "utils/**",
+    "middleware.js",
+    "schema.js",
+    "cloud_config.js"
+  ]
+  external_node_modules = [
+    "mongoose",
+    "multer",
+    "multer-storage-cloudinary",
+    "cloudinary",
+    "passport",
+    "passport-local",
+    "passport-local-mongoose",
+    "express-session",
+    "connect-flash",
+    "method-override",
+    "ejs",
+    "ejs-mate"
+  ]
+
+[[redirects]]
+  from = "/public/*"
+  to = "/public/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/api"
   status = 200
 
-[functions]
-  included_files = ["views/**", "public/**"]
+[build.environment]
+  NODE_VERSION = "18"
+  NODE_ENV = "production"
