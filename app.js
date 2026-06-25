@@ -36,13 +36,17 @@ async function main() {
 }
 
 // App configuration
+// In Netlify Lambda, __dirname is /var/task/netlify/functions (the bundled file location).
+// LAMBDA_TASK_ROOT is /var/task (the project root), so we use it when available.
+const ROOT_DIR = process.env.LAMBDA_TASK_ROOT || __dirname;
+
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(ROOT_DIR, "views"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
-app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(ROOT_DIR, "public")));
 
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "mysupersecretcode",
