@@ -23,30 +23,49 @@ const adminRouter = require("./routes/admin.js");
 const chatbotRouter = require("./routes/chatbot.js");
 const recommendationsRouter = require("./routes/recommendations.js");
 
-// Disable Mongoose's command buffering globally.
-// Without this, Mongoose queues queries for up to 10s while connecting — causing
-// the "buffering timed out" error on serverless cold starts.
-mongoose.set('bufferCommands', false);
+// ─── MongoDB Connection (Serverless-safe) ────────────────────────────────────
+//
+// KEY INSIGHT: On a Lambda cold start, multiple concurrent requests can all see
+// isConnected=false and each fire mongoose.connect() in parallel → race condition.
+//
+// FIX: Cache the connection PROMISE, not just a boolean flag.
+// All callers await the same promise — only one connect() ever runs.
+//
+// We also remove bufferCommands:false because it causes instant failures during
+// the tiny gap between Lambda start and connection ready. Let Mongoose buffer
+// briefly — our middleware ensures the connection is done before routes run.
 
-// Serverless-safe MongoDB connection with caching.
-// Lambda containers persist between warm invocations, so we reuse the connection.
-let isConnected = false;
+let _dbPromise = null;
 
-async function connectDB() {
-    if (isConnected && mongoose.connection.readyState === 1) {
-        return; // already connected — reuse
-    }
-    isConnected = false;
-    await mongoose.connect(MONGO_URL, {
-        serverSelectionTimeoutMS: 8000,
-        socketTimeoutMS: 8000,
-    });
-    isConnected = true;
-    console.log("Connected to DB ✅");
+function connectDB() {
+    // Already fully connected — fast path
+    if (mongoose.connection.readyState === 1) return Promise.resolve();
+
+    // Connection already in progress — all callers share this promise
+    if (_dbPromise) return _dbPromise;
+
+    // Start a new connection and cache the promise
+    _dbPromise = mongoose
+        .connect(MONGO_URL, {
+            serverSelectionTimeoutMS: 8000,
+            socketTimeoutMS: 8000,
+            maxPoolSize: 1, // keep pool small for serverless
+        })
+        .then(() => {
+            console.log("Connected to DB ✅");
+        })
+        .catch((err) => {
+            _dbPromise = null; // reset so next request can retry
+            console.error("DB connection error:", err.message);
+            throw err;
+        });
+
+    return _dbPromise;
 }
 
-// Kick off connection at module load (speeds up first request on warm starts)
-connectDB().catch(err => console.error("Initial DB connect failed:", err.message));
+// Kick off at module load so warm invocations are instant
+connectDB().catch(() => {});
+
 
 
 // App configuration
