@@ -4,7 +4,7 @@
   publish = "public"
 
 [functions]
-  node_bundler = "esbuild"
+  node_bundler = "nft"
   included_files = [
     "views/**",
     "public/**",
@@ -15,20 +15,6 @@
     "middleware.js",
     "schema.js",
     "cloud_config.js"
-  ]
-  external_node_modules = [
-    "mongoose",
-    "multer",
-    "multer-storage-cloudinary",
-    "cloudinary",
-    "passport",
-    "passport-local",
-    "passport-local-mongoose",
-    "express-session",
-    "connect-flash",
-    "method-override",
-    "ejs",
-    "ejs-mate"
   ]
 
 [[redirects]]

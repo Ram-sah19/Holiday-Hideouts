@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// IMPORTANT: import correctly
-const passportLocalMongoose = require("passport-local-mongoose");
+// esbuild (used by Netlify) wraps CJS modules as { default: fn }.
+// We use .default if present (bundled), otherwise fall back to the raw export (local dev).
+const _plm = require("passport-local-mongoose");
+const passportLocalMongoose = _plm.default || _plm;
+
 
 const userSchema = new Schema({
     email: {

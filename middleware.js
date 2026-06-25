@@ -22,7 +22,11 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
-    if( !listing.owner.equals(res.locals.currUser._id)){
+    if (!listing) {
+        req.flash("error", "Listing not found");
+        return res.redirect("/listings");
+    }
+    if (!res.locals.currUser || !listing.owner.equals(res.locals.currUser._id)) {
         req.flash("error", "You do not have permission to edit this listing");
         return res.redirect(`/listings/${id}`);
     }
@@ -53,9 +57,13 @@ module.exports.validateReview = (req, res, next) => {
 
 module.exports.isReviewAuthor = async (req, res, next) => {
     let { id, reviewId } = req.params;
-    let review= await Review.findById(reviewId);
-    if( !review.author.equals(res.locals.currUser._id)){
-        req.flash("error", "You do not have permission ");
+    let review = await Review.findById(reviewId);
+    if (!review) {
+        req.flash("error", "Review not found");
+        return res.redirect(`/listings/${id}`);
+    }
+    if (!res.locals.currUser || !review.author.equals(res.locals.currUser._id)) {
+        req.flash("error", "You do not have permission");
         return res.redirect(`/listings/${id}`);
     }
     next();
