@@ -5,30 +5,28 @@ module.exports.renderSignupform= (req, res) => {
 };
 
 module.exports.Signup = async (req, res, next) => {
-    try{
-    let {username, email, password, role} = req.body;
-    const newUser = new User({email, username, role: role || 'client'});
-    const registeredUser = await User.register(newUser, password);
-    console.log(registeredUser);
-    req.login(registeredUser, (err) => {
-        if (err) {
-            return next(err);
-        }
-        req.flash("success", "Welcome to Wanderlust!");
-        req.session.save((err) => {
+    try {
+        let { username, email, password, role } = req.body;
+        // passport-local-mongoose adds 'username' field via the plugin.
+        // Pass it to new User() — the plugin schema includes it.
+        const newUser = new User({ email, username, role: role || "client" });
+        const registeredUser = await User.register(newUser, password);
+        console.log("Registered user:", registeredUser.username);
+        req.login(registeredUser, (err) => {
             if (err) {
                 return next(err);
             }
-            res.redirect("/listings");
+            req.flash("success", "Welcome to Wanderlust!");
+            req.session.save((saveErr) => {
+                if (saveErr) return next(saveErr);
+                res.redirect("/listings");
+            });
         });
-    });
-   
-
     } catch (e) {
+        console.error("Signup error:", e.message);
         req.flash("error", e.message);
         res.redirect("/signup");
     }
-  
 };
 
 module.exports.renderLoginForm=  (req, res) => {

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // IMPORTANT: import correctly
-const passportLocalMongoose = require("passport-local-mongoose").default;
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const userSchema = new Schema({
     email: {
