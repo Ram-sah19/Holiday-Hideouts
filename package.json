@@ -8,6 +8,7 @@
     "dev": "nodemon app.js",
     "build": "echo 'No build step needed'",
     "seed": "node init/index.js",
+    "migrate": "node init/migrate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["travel", "booking", "mern", "mongodb", "express"],

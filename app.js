@@ -11,7 +11,6 @@ const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
-const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
 const listingsRouter = require("./routes/listing.js");
@@ -92,7 +91,10 @@ app.use(async (req, res, next) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+
+// passport-local-mongoose provides User.authenticate() — a pre-built strategy.
+// We pass it directly without wrapping in new LocalStrategy().
+passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
