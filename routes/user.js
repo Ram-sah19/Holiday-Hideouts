@@ -11,6 +11,10 @@ const userController = require('../controllers/users.js');
 router.route("/signup")
     .get(userController.renderSignupform )
     .post(
+    (req, res, next) => {
+        console.log("[DEBUG] Express /signup POST body:", req.body);
+        next();
+    },
     wrapAsync (userController.Signup)
 );
 
@@ -18,6 +22,11 @@ router.route("/login")
     .get(userController.renderLoginForm)
     .post(
     saveRedirectUrl,
+    (req, res, next) => {
+        console.log("[DEBUG] Express /login POST body:", req.body);
+        console.log("[DEBUG] Express /login POST headers:", req.headers);
+        next();
+    },
     passport.authenticate("local", {
         failureFlash: true, 
         failureRedirect: "/login"
