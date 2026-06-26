@@ -75,6 +75,39 @@ const ROOT_DIR = process.env.LAMBDA_TASK_ROOT || __dirname;
 
 app.set("view engine", "ejs");
 app.set("views", path.join(ROOT_DIR, "views"));
+
+// Serverless-specific body parser middleware:
+// Netlify/serverless-http can pass req.body as a Buffer or raw string.
+// Since Express's body parsers skip parsing if req.body is already defined,
+// we manually parse the Buffer/string into an object here.
+app.use((req, res, next) => {
+    if (req.body) {
+        const contentType = (req.headers["content-type"] || "").toLowerCase();
+        let rawBody = null;
+
+        if (Buffer.isBuffer(req.body)) {
+            rawBody = req.body.toString("utf8");
+        } else if (typeof req.body === "string") {
+            rawBody = req.body;
+        }
+
+        if (rawBody !== null) {
+            if (contentType.includes("application/x-www-form-urlencoded")) {
+                const querystring = require("querystring");
+                req.body = querystring.parse(rawBody);
+            } else if (contentType.includes("application/json")) {
+                try {
+                    req.body = JSON.parse(rawBody);
+                } catch (e) {
+                    console.error("Failed to parse JSON body:", e.message);
+                    req.body = {};
+                }
+            }
+        }
+    }
+    next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
